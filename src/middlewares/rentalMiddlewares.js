@@ -35,3 +35,24 @@ export async function validateNewRental (req, res, next) {
     res.sendStatus(500);
   }
 }
+
+export async function verifyIdRental (req, res, next) {
+  try {
+    const id = req.params.id;
+
+    const verifyId = await connection.query(`
+      SELECT * FROM rentals WHERE id = $1
+    `, [id]);
+
+    if (verifyId.rowCount === 0) return res.sendStatus(404);
+
+    if (verifyId.rows[0].returnDate !== null) return res.sendStatus(400);
+
+    res.locals.rental = verifyId;
+    
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
