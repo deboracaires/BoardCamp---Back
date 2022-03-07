@@ -26,6 +26,23 @@ export async function getCustomers (req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function getCustomerById (req, res) {
+  try {
+    const id = req.params.id;
+
+    const customer = await connection.query(`
+      SELECT * FROM customers WHERE id = $1
+    `, [id]);
+
+    if (customer.rowCount === 0) return res.sendStatus(404);
+
+    res.send(customer.rows);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
 export async function postCustomer (req, res) {
   try {
     const {
