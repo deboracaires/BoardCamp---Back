@@ -29,20 +29,15 @@ export async function getCustomers (req, res) {
 
 export async function getCustomerById (req, res) {
   try {
-    const id = req.params.id;
+    const customer = res.locals.customer;
 
-    const customer = await connection.query(`
-      SELECT * FROM customers WHERE id = $1
-    `, [id]);
-
-    if (customer.rowCount === 0) return res.sendStatus(404);
-
-    res.send(customer.rows);
+    res.send(customer);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
   }
 }
+
 export async function postCustomer (req, res) {
   try {
     const {
@@ -58,6 +53,28 @@ export async function postCustomer (req, res) {
     `, [name, phone, cpf, birthday]);
 
     res.sendStatus(201);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
+
+export async function updateCustomer (req, res) {
+  try {
+    const id = req.params.id;
+
+    const {
+      name,
+      phone,
+      cpf,
+      birthday,
+    } = req.body;
+
+    await connection.query(`
+      UPDATE customers SET name = $2, phone = $3, cpf = $4, birthday = $5 WHERE id = $1;
+    `, [id, name, phone, cpf, birthday]);
+    
+    res.sendStatus(200);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
