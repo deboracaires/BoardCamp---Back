@@ -31,7 +31,7 @@ export async function getCustomerById (req, res) {
   try {
     const customer = res.locals.customer;
 
-    res.send(customer);
+    res.send(customer[0]);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

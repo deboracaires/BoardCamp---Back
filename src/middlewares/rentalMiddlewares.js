@@ -15,9 +15,13 @@ export async function validateNewRental (req, res, next) {
       SELECT * FROM games WHERE id = $1
     `, [req.body.gameId]);
 
-    const verifyDisponibility = await connection.query(`
+    let verifyDisponibility = await connection.query(`
       SELECT * FROM rentals WHERE "gameId" = $1
     `, [req.body.gameId]);
+
+    verifyDisponibility.rows.filter((rental) => {
+      if (rental.returnDate === null) return rental;
+    });
 
     if (verifyCustomer.rowCount === 0 || verifyGame.rowCount === 0) return res.sendStatus(400);
 

@@ -28,6 +28,14 @@ export async function postRental (req, res) {
 
 export async function getRentals (req, res) {
   try {
+    let customerId = '';
+
+    if (req.query.customerId) customerId = `WHERE customers.id = ${req.query.customerId}`;
+    
+    let gameId = '';
+
+    if (req.query.gameId) gameId = `WHERE games.id = ${req.query.gameId}`;
+
     const rentals = await connection.query({
         text: `
           SELECT rentals.*, 
@@ -38,12 +46,13 @@ export async function getRentals (req, res) {
           JOIN customers ON rentals."customerId"=customers.id
           JOIN games ON rentals."gameId"=games.id
           JOIN categories ON games."categoryId"=categories.id
+          ${customerId}
+          ${gameId}
         `,
         rowMode: 'array'
     });
     
     const rental = rentals.rows.map(row => {
-        console.log(row);
       const [ id, customerId, gameId, rentDate, 
         daysRented, returnDate, originalPrice, delayFee, 
         idCustomer, name, phone, cpf, birthday, idGame, 
