@@ -7,10 +7,21 @@ export async function getCustomers (req, res) {
 
     if (req.query.cpf) cpf = `WHERE customers.cpf LIKE '${req.query.cpf}%'`;
 
+    let offset = '';
+
+    if (req.query.offset) offset = `OFFSET ${req.query.offset}`;
+
+    let limit = '';
+
+    if (req.query.limit) limit = `LIMIT ${req.query.limit}`;
+
     const customers = await connection.query({
         text: `
           SELECT * FROM customers
+          ORDER BY 1
           ${cpf}
+          ${offset}
+          ${limit}
         `
     });
 

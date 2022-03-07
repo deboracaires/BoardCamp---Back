@@ -6,12 +6,23 @@ export async function getGames (req, res) {
 
     if (req.query.name) name = `WHERE games.name LIKE '${req.query.name}%'`;
 
+    let offset = '';
+
+    if (req.query.offset) offset = `OFFSET ${req.query.offset}`;
+
+    let limit = '';
+
+    if (req.query.limit) limit = `LIMIT ${req.query.limit}`;
+
     const games = await connection.query({
         text: `
           SELECT games.*,
           categories.name as "categoryName" FROM categories
           JOIN games on games."categoryId" = categories.id
+          ORDER BY 1
           ${name}
+          ${offset}
+          ${limit}
         `,
         rowMode: 'array'
     });
