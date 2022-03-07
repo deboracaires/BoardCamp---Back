@@ -6,7 +6,6 @@ export async function getGames (req, res) {
 
     if (req.query.name) name = `WHERE games.name LIKE '${req.query.name}%'`;
 
-
     const games = await connection.query({
         text: `
           SELECT games.*,
